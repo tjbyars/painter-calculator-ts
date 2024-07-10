@@ -10,6 +10,11 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "ts-jest": "^29.2.1",
     "typescript": "^5.5.3"
+  },
+  "dependencies": {
+    "readline-sync": "^1.4.10"
   }
 }
