@@ -5,35 +5,123 @@ let userName = readlineSync.question('May I have your name?\n');
 console.log('Hi ' + userName + '! Today we are going to find the best paint for you!');
 // Get number of rooms
 function getRooms() {
-    return readlineSync.question("How many rooms do you have?\n");
+    let answer = readlineSync.question("How many rooms do you have?\n");
+    try {
+        answer = parseInt(answer);
+        if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        return answer;
+    }
+    catch (error) {
+        console.log(`\nError: ${error.message}`);
+        answer = getRooms();
+    }
+    return answer;
 }
 // Get room name
 function getRoomName() {
-    return readlineSync.question("What is the name of the room?\n");
+    let answer = readlineSync.question("What is the name of the room?\n");
+    if (typeof (answer) !== "string") {
+        answer = getRoomName();
+    }
+    return answer;
 }
 // Get ID number of the chosen paint
 function getPaintChoice() {
-    return readlineSync.question("Which paint would you like?\n");
+    let answer = readlineSync.question("Which paint would you like? (Please enter the ID number)\n");
+    try {
+        answer = parseInt(answer);
+        if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        return answer;
+    }
+    catch (error) {
+        console.log(`\nError: ${error.message}`);
+        answer = getPaintChoice();
+    }
+    return answer;
 }
 // Get number of coats of paint
 function getCoatsOfPaint() {
-    return readlineSync.question("How many coats of paint would you like?\n");
+    let answer = readlineSync.question("How many coats of paint would you like?\n");
+    try {
+        answer = parseInt(answer);
+        if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        return answer;
+    }
+    catch (error) {
+        console.log(`\nError: ${error.message}`);
+        answer = getCoatsOfPaint();
+    }
+    return answer;
 }
 // Get number of walls for room
 function getNumberOfWalls() {
-    return readlineSync.question("How many walls would you like to paint in this room? (If painting the ceiling, please count it as a wall)\n");
+    let answer = readlineSync.question("How many walls would you like to paint in this room? (If painting the ceiling, please count it as a wall)\n");
+    try {
+        answer = parseInt(answer);
+        if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        return answer;
+    }
+    catch (error) {
+        console.log(`\nError: ${error.message}`);
+        answer = getNumberOfWalls();
+    }
+    return answer;
 }
 // Get height
 function getHeight() {
-    return readlineSync.question("Please input the height.\n");
+    let answer = readlineSync.question("Please input the height.\n");
+    try {
+        answer = parseInt(answer);
+        if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        return answer;
+    }
+    catch (error) {
+        console.log(`\nError: ${error.message}`);
+        answer = getHeight();
+    }
+    return answer;
 }
 // Get width
 function getWidth() {
-    return readlineSync.question("Please input the width.\n");
+    let answer = readlineSync.question("Please input the width.\n");
+    try {
+        answer = parseInt(answer);
+        if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        return answer;
+    }
+    catch (error) {
+        console.log(`\nError: ${error.message}`);
+        answer = getWidth();
+    }
+    return answer;
 }
 // Get number of obstacles
 function getObstaclesNumber() {
-    return readlineSync.question("How many obstacles are there on this wall?\n");
+    let answer = readlineSync.question("How many obstacles are there on this wall?\n");
+    try {
+        answer = parseInt(answer);
+        if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        return answer;
+    }
+    catch (error) {
+        console.log(`\nError: ${error.message}`);
+        answer = getObstaclesNumber();
+    }
+    return answer;
 }
 // Get best price for chosen paint for the area
 function getBestPrice(paint, area) {
@@ -78,27 +166,35 @@ function getLargestCan(paintRemaining) {
     });
     return largestCan;
 }
-// Calculate price of given paints list
-function calculatePaintCost() {
-    let totalCost = 0;
-    return totalCost;
+// Print all available paint colours
+function printAllPaints(area) {
+    console.log("Currently the available paints are: ");
+    for (let i = 0; i < paintList.length; i++) {
+        console.log("PaintID: " + i +
+            "     Colour: " + paintList[i][0] +
+            "     Brand: " + paintList[i][1] +
+            "     Best price: " + getBestPrice(i, area)[0]);
+    }
 }
 // Position of paint is ID
 // Format is                Colour Brand Coverage Pricelist (coverage is m^2 / litres)
 //                                              10L, 5L, 2.5L, 1L
-const paintList = [["White", "Dulux", 1, [10, 5, 2.5, 1]]
+const paintList = [["White", "Dulux", 13, [27, 18, 16, 10]],
     //                            0       1      2  3 0  1   2   3
-    ,
-    ["Blue", "Dulux", 8, [10, 5, 2.5, 1]]
+    ["White", "Sandtex", 16, [40, 30, 24, 20]],
+    ["White", "GoodHome", 8, [36, 30, 18, 15]],
+    ["White", "Valspar", 10, [30, 24, 18, 15]],
+    ["Blue", "Dulux", 16, [40, 30, 24, 20]],
+    ["Blue", "Sandtex", 8, [36, 30, 18, 15]],
+    ["Blue", "GoodHome", 10, [30, 24, 18, 15]],
+    ["Blue", "Valspar", 10, [30, 24, 18, 15]],
+    ["Green", "Dulux", 16, [40, 30, 24, 20]],
+    ["Green", "Sandtex", 8, [36, 30, 18, 15]],
+    ["Green", "GoodHome", 10, [30, 24, 18, 15]],
+    ["Green", "Valspar", 10, [30, 24, 18, 15]],
 ];
-// Colours: White Blue Green Red Yellow Black
-// Brands: Dulux Lick Leyland
 // Store these in a file (json) because currently this SUCKS
 // Start testing code
-console.log("Best paint sizes for room: " + getBestPrice(0, 34)[1]);
-console.log("Best paint sizes for room: " + getBestPrice(0, 36)[1]);
-console.log("Best paint sizes for room: " + getBestPrice(0, 30.1)[1]);
-console.log("Best paint sizes for room: " + getBestPrice(0, 39.9)[1]);
 let numberOfRooms = getRooms();
 let roomsList = [];
 //                   0        1       2       3               4
@@ -108,8 +204,7 @@ for (let i = 0; i < numberOfRooms; i++) {
     let room = []; // Create list to hold room info
     let roomName = getRoomName();
     room.push(roomName);
-    let paintChoice = getPaintChoice();
-    room.push(paintChoice);
+    room.push("paintChoice");
     let coatsOfPaint = getCoatsOfPaint();
     room.push(coatsOfPaint);
     let numberOfWalls = getNumberOfWalls();
@@ -138,18 +233,20 @@ for (let i = 0; i < numberOfRooms; i++) {
     room.push(totalWallSize);
     roomsList.push(room); // add room info to rooms list
 }
-console.log("Rooms list array: " + roomsList);
+// console.log("Rooms list array: " + roomsList);
 //          Prints: roomName, paintID, coatsOfPaint, numOfWalls, totalRoomArea
 // Loop through each room, calculating best cost
 roomsList.forEach(room => {
-    console.log("For your room called : " + room[0]);
+    console.log("\n\n\nFor your room called : " + room[0]);
     console.log("The total area of the " + room[3] + " walls is: " + room[4] + " m^2.");
-    console.log("With your choice of paint #" + room[1]);
-    let amountOfPaint = 5; // This needs to be a calculation based on the coverage of the chosen paint
-    // which should just be paintList[id]
-    console.log("You will need " + amountOfPaint + " litres of paint.");
+    printAllPaints(room[4]);
+    room[1] = getPaintChoice();
+    console.log("\n\nWith your choice of paint #" + room[1]);
+    let amountOfPaint = room[4] / paintList[room[1]][2];
+    console.log("You will need " + (Math.round(amountOfPaint * 100) / 100) + " litres of paint.");
     let bestPrice = getBestPrice(room[1], room[4]);
-    console.log("It will cost you: £" + bestPrice[0] + " and you will need to buy these paint can sizes: " + bestPrice[1]);
+    console.log("It will cost you: £" + bestPrice[0]);
+    console.log("You will need to buy these paint can sizes: " + bestPrice[1] + "\n");
 });
 /*
 get number of rooms
