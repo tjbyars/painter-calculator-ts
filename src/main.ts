@@ -46,32 +46,65 @@ function getObstaclesNumber(): number {
 
 // Get best price for chosen paint for the area
 function getBestPrice(paint: number, area: number): any[] {
-    let cansToBuy: string ="";
+    let cansToBuy: number[] = []; // maybe as an array instead
     let paintNeeded: number = area / paintList[paint][2]
-    let bestPrice: number = paintNeeded * paintList[paint][3][3];
-    paintList[paint][3].forEach(canSize => {
-        let paintRemaining: number = paintNeeded;
-        // while paintRemaining 0;
-        // string largestPaintCan = getLargestCan(paintRemaining);
-    }) 
-    return [bestPrice, cansToBuy];   // return array in format []
+    let paintRemaining: number = paintNeeded;
+    while (paintRemaining > 0) {
+        let largestCan = getLargestCan(paintRemaining);
+        cansToBuy.push(largestCan);
+        paintRemaining -= largestCan;
+    }
+    let bestPrice: number = 0;
+    cansToBuy.forEach(can => {
+        if (can == 10) {
+            bestPrice += paintList[paint][3][0];
+        } else if (can == 5) {
+            bestPrice += paintList[paint][3][1];
+        } else if (can == 2.5) {
+            bestPrice += paintList[paint][3][2];
+        } else {
+            bestPrice += paintList[paint][3][3];
+        }
+    })
+    return [bestPrice, cansToBuy];
 }
 
 // Get largest paint can that can be used for the given area
-function getLargestCan(): number {
-    
+function getLargestCan(paintRemaining: number): number {
+    let paintSizes: number[] = [10, 5, 2.5, 1];
+    if (paintRemaining <= 0) {
+        return 0;
+    }
+    let largestCan: number = 1;
+    paintSizes.forEach(size => {
+        if ((paintRemaining - size) >= 0) {
+            if (size > largestCan) {
+                largestCan = size;
+            }
+        }
+    })
+    return largestCan;
+}
+
+// Calculate price of given paints list
+function calculatePaintCost(): number {
+    let totalCost: number = 0;
+
+    return totalCost;
 }
 
 // Position of paint is ID
 // Format is                Colour Brand Coverage Pricelist (coverage is m^2 / litres)
 //                                              10L, 5L, 2.5L, 1L
-const paintList: any[] = [["White", "Dulux", 6, [10, 5, 2.5, 1]]
+const paintList: any[] = [["White", "Dulux", 1, [10, 5, 2.5, 1]]
 //                            0       1      2  3 0  1   2   3
 ,["Blue", "Dulux", 8, [10, 5, 2.5, 1]]
 ];
 // Colours: White Blue Green Red Yellow Black
 // Brands: Dulux Lick Leyland
 // Store these in a file (json) because currently this SUCKS
+
+// Start testing code
 
 
 let numberOfRooms = getRooms();
@@ -115,6 +148,7 @@ for (let i = 0; i < numberOfRooms; i++) {
     roomsList.push(room); // add room info to rooms list
 }
 console.log("Rooms list array: " + roomsList);
+//          Prints: roomName, paintID, coatsOfPaint, numOfWalls, totalRoomArea
 
 // Loop through each room, calculating best cost
 roomsList.forEach(room => {
@@ -124,8 +158,8 @@ roomsList.forEach(room => {
     let amountOfPaint: number = 5;  // This needs to be a calculation based on the coverage of the chosen paint
     // which should just be paintList[id]
     console.log("You will need " + amountOfPaint + " litres of paint.")
-    let bestPrice: number = getBestPrice(room[1], room[4]);
-    console.log("It will cost you " + paintList[room[1]])
+    let bestPrice: number[] = getBestPrice(room[1], room[4]);
+    console.log("It will cost you: £" + bestPrice[0] + " and you will need to buy these paint can sizes: " + bestPrice[1]);
 })
 
 
@@ -188,3 +222,14 @@ coats of paint			x
 
 then recommend most cost efficient way to cover the walls
 */
+
+
+// ###Testing Code###
+// console.log("Largest can for 27: " + getLargestCan(27));
+// console.log("Largest can for 10: " + getLargestCan(10));
+// console.log("Largest can for 9: " + getLargestCan(9));
+// console.log("Largest can for 5: " + getLargestCan(5));
+// console.log("Largest can for 2.6: " + getLargestCan(2.6));
+// console.log("Largest can for 1: " + getLargestCan(1));
+// console.log("Largest can for .5: " + getLargestCan(.5));
+// console.log("Largest can for -1: " + getLargestCan(-1));
