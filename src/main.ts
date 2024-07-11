@@ -1,12 +1,49 @@
+
+
+// ### Planning process ###
+/*
+wall info			        x
+obstacle info		    	x
+(rooms?)		        	x
+colours of paint	    	x
+brands of paint		    	x
+can sizes 10L 5L 2.5L 1L	x
+paint coverages		    	x
+coats of paint		    	x
+
+get number of rooms
+loop through rooms
+    get paint choice
+        colour
+        brand options   (give coverage info and price per litre ranges)
+    coats of paint
+    get number of walls in this room
+    loop through walls
+        get individual wall info
+        width
+        height
+        loop through obstacles
+            width
+            height
+
+loop through rooms
+    give optimal buying choice
+*/
+
+
+
+
+
 let readlineSync = require('readline-sync');
  
-// Wait for user's response.
+// ### Questions ###
+// Get user's name
 let userName = readlineSync.question('May I have your name?\n');
 console.log('Hi ' + userName + '! Today we are going to find the best paint for you!');
 
 // Get number of rooms
 function getRooms(): number {
-    let answer:any = readlineSync.question("How many rooms do you have?\n");
+    let answer:any = readlineSync.question("How many rooms do you have? (Please enter a whole number)\n");
     try {
         answer = parseInt(answer);
         if (isNaN(answer)) {
@@ -31,10 +68,13 @@ function getRoomName(): string {
 
 // Get ID number of the chosen paint
 function getPaintChoice(): number {
-    let answer:any = readlineSync.question("Which paint would you like? (Please enter the ID number)\n");
+    let answer:any = readlineSync.question("Which paint would you like? (Please enter the ID number as a whole number)\n");
     try {
         answer = parseInt(answer);
         if (isNaN(answer)) {
+            throw new Error("Invalid input");
+        }
+        if (answer > paintList.length - 1) {
             throw new Error("Invalid input");
         }
         return answer;
@@ -47,7 +87,7 @@ function getPaintChoice(): number {
 
 // Get number of coats of paint
 function getCoatsOfPaint(): number {
-    let answer:any = readlineSync.question("How many coats of paint would you like?\n");
+    let answer:any = readlineSync.question("How many coats of paint would you like? (Please enter a whole number)\n");
     try {
         answer = parseInt(answer);
         if (isNaN(answer)) {
@@ -63,7 +103,7 @@ function getCoatsOfPaint(): number {
 
 // Get number of walls for room
 function getNumberOfWalls(): number {
-    let answer:any = readlineSync.question("How many walls would you like to paint in this room? (If painting the ceiling, please count it as a wall)\n");
+    let answer:any = readlineSync.question("How many walls would you like to paint in this room? (Please enter a whole number, and if painting the ceiling, please count it as a wall)\n");
     try {
         answer = parseInt(answer);
         if (isNaN(answer)) {
@@ -79,11 +119,14 @@ function getNumberOfWalls(): number {
 
 // Get height
 function getHeight(): number {
-    let answer:any = readlineSync.question("Please input the height.\n");
+    let answer:any = readlineSync.question("Please input the height in metres as a whole number or decimal.\n");
     try {
-        answer = parseInt(answer);
+        answer = parseFloat(answer);
         if (isNaN(answer)) {
             throw new Error("Invalid input");
+        }
+        if (answer <= 0) {
+            throw new Error("Too small");
         }
         return answer;
     } catch (error: any) {
@@ -95,11 +138,14 @@ function getHeight(): number {
 
 // Get width
 function getWidth(): number {
-    let answer:any = readlineSync.question("Please input the width.\n");
+    let answer:any = readlineSync.question("Please input the width in metres as a whole number or decimal.\n");
     try {
-        answer = parseInt(answer);
+        answer = parseFloat(answer);
         if (isNaN(answer)) {
             throw new Error("Invalid input");
+        }
+        if (answer <= 0) {
+            throw new Error("Too small");
         }
         return answer;
     } catch (error: any) {
@@ -111,7 +157,7 @@ function getWidth(): number {
 
 // Get number of obstacles
 function getObstaclesNumber(): number {
-    let answer:any = readlineSync.question("How many obstacles are there on this wall?\n");
+    let answer:any = readlineSync.question("How many obstacles are there on this wall? (Please enter a whole number)\n");
     try {
         answer = parseInt(answer);
         if (isNaN(answer)) {
@@ -125,9 +171,11 @@ function getObstaclesNumber(): number {
     return answer;
 }
 
+
+// ### Functionality ###
 // Get best price for chosen paint for the area
 function getBestPrice(paint: number, area: number): any[] {
-    let cansToBuy: number[] = []; // maybe as an array instead
+    let cansToBuy: number[] = [];
     let paintNeeded: number = area / paintList[paint][2]
     let paintRemaining: number = paintNeeded;
     while (paintRemaining > 0) {
@@ -151,7 +199,7 @@ function getBestPrice(paint: number, area: number): any[] {
 }
 
 // Get largest paint can that can be used for the given area
-function getLargestCan(paintRemaining: number): number {
+export function getLargestCan(paintRemaining: number): number {
     let paintSizes: number[] = [10, 5, 2.5, 1];
     if (paintRemaining <= 0) {
         return 0;
@@ -178,6 +226,8 @@ function printAllPaints(area: number) {
     }
 }
 
+
+// ### "Database" ###
 // Position of paint is ID
 // Format is                Colour Brand Coverage Pricelist (coverage is m^2 / litres)
 //                                              10L, 5L, 2.5L, 1L
@@ -195,11 +245,9 @@ const paintList: any[] = [["White", "Dulux", 13, [27, 18, 16, 10]],
 ["Green", "GoodHome", 10, [30, 24, 18, 15]],
 ["Green", "Valspar", 10, [30, 24, 18, 15]],
 ];
-// Store these in a file (json) because currently this SUCKS
-
-// Start testing code
 
 
+// ### Main process ###
 let numberOfRooms = getRooms();
 let roomsList: any[] = [];
 //                   0        1       2       3               4
@@ -230,6 +278,10 @@ for (let i = 0; i < numberOfRooms; i++) {
             let obstacleSize = obstacleHeight * obstacleWidth;
             wallSize -= obstacleSize;
         }
+        if (wallSize <= 0) {
+            console.log("Error: You have entered a wall that is less than or equal to zero.");
+            process.exit();
+        }
         wallsList.push(wallSize);    // add wall size to wall list
     }
     let totalWallSize: number = 0;
@@ -239,8 +291,6 @@ for (let i = 0; i < numberOfRooms; i++) {
     room.push(totalWallSize);
     roomsList.push(room); // add room info to rooms list
 }
-// console.log("Rooms list array: " + roomsList);
-//          Prints: roomName, paintID, coatsOfPaint, numOfWalls, totalRoomArea
 
 // Loop through each room, calculating best cost
 roomsList.forEach(room => {
@@ -257,40 +307,30 @@ roomsList.forEach(room => {
 })
 
 
-/*
-get number of rooms
-loop through rooms
-    get paint choice
-        colour
-        brand options   (give coverage info and price per litre ranges)
-    coats of paint
-    get number of walls in this room
-    loop through walls
-        get individual wall info
-        width
-        height
-        loop through obstacles
-            width
-            height
 
-loop through rooms
-    give optimal buying choice
-*/
 
+
+
+/// ### Improvements ### 
 /*
-provide paint choices
-calculate best paint choice based on price
-prevent obstacle from being bigger than wall
+Store paintlist in a file (json) because currently this isn't ideal
 make getObstacle a method
 make getWall a method
 make getRoomInfo a method
-change paintChoice in main loop to be a choice of colours, then:
-    move paint ID choice to the forEach room loop, and let them choose from the options available in their chosen colour
-    after giving them the prices for each option in that colour
-factor in wall shape (e.g. circle etc)
+factor in wall shape (e.g. triangle, circle, etc.)
+could make classes for rooms, walls, paints
 */
 
-// could make classes for rooms, walls, paints?
+
+
+// ### Testing ###
+module.exports = getLargestCan;
+
+
+
+
+
+
 
 
 /* Notes
@@ -304,17 +344,6 @@ https://jestjs.io/docs/getting-started#using-typescript
 npm install --save-dev ts-jest
 
 Vite helps with setup faster
-
-wall info			x
-obstacle info			x
-(rooms?)			x
-colours of paint		x
-brands of paint			x
-can sizes 10L 5L 2.5L 1L	x
-paint coverages			x
-coats of paint			x
-
-then recommend most cost efficient way to cover the walls
 */
 
 
